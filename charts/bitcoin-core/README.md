@@ -1,6 +1,6 @@
 # bitcoin-core
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 22.0-alpine](https://img.shields.io/badge/AppVersion-22.0--alpine-informational?style=flat-square)
+![Version: 0.1.2](https://img.shields.io/badge/Version-0.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 22.0-alpine](https://img.shields.io/badge/AppVersion-22.0--alpine-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -10,7 +10,7 @@ A Helm chart for Kubernetes
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Affinity is a group of affinity scheduling rules More info: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#affinity-v1-core |
 | bitcoind.config.additionalOptions | string | `nil` |  |
-| bitcoind.config.bind | string | `"0.0.0.0"` |  |
+| bitcoind.config.p2pbind | string | `"0.0.0.0"` |  |
 | bitcoind.config.rpcallowip | string | `"0.0.0.0"` |  |
 | bitcoind.config.rpcbind | string | `"0.0.0.0"` |  |
 | bitcoind.image.pullPolicy | string | `"IfNotPresent"` |  |

@@ -53,7 +53,7 @@ bitcoind:
   securityContext: {}
   resources: {}
   config:
-    bind: "0.0.0.0"
+    p2pbind: "0.0.0.0"
     rpcbind: "0.0.0.0"
     rpcallowip: "0.0.0.0"
     additionalOptions: null

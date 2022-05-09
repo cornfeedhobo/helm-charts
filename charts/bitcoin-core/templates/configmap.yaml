@@ -20,7 +20,7 @@ data:
   bitcoin.conf: |-
     printtoconsole=1
     server=1
-    bind={{ .Values.bitcoind.config.bind }}
+    bind={{ .Values.bitcoind.config.p2pbind }}
     rpcbind={{ .Values.bitcoind.config.rpcbind }}
     rpcallowip={{ .Values.bitcoind.config.rpcallowip }}
     rpcport={{ .Values.bitcoind.ports.rpc }}
