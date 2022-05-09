@@ -52,25 +52,19 @@ bitcoind:
     pullPolicy: "IfNotPresent"
   securityContext: {}
   resources: {}
-  config:
-    p2pbind: "0.0.0.0"
-    rpcbind: "0.0.0.0"
-    rpcallowip: "0.0.0.0"
-    additionalOptions: null
-  ports:
-    rpc: 8332
-    p2p: 8333
-  service:
-    # -- Normally the RPC service is only exposed locally.
-    rpc:
-      type: "ClusterIP"
-    # -- Change to NodePort or LoadBalancer to expose the p2p service to the public.
-    p2p:
-      type: "NodePort"
-  # -- RPC username
-  rpcUsername: "rpcuser"
-  # -- RPC password
-  rpcPassword: "rpcpassword"
+  rpc:
+    bind: "0.0.0.0"
+    port: 8332
+    service: "ClusterIP"
+    allowip: "0.0.0.0"
+    username: "rpcuser"
+    password: "rpcpassword"
+  p2p:
+    bind: "0.0.0.0"
+    port: 8333
+    service: "NodePort"
+  # -- Map of additional options to add to the config
+  additionalOptions: null
 
 exporter:
   enabled: false

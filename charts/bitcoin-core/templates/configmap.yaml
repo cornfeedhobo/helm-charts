@@ -20,12 +20,12 @@ data:
   bitcoin.conf: |-
     printtoconsole=1
     server=1
-    bind={{ .Values.bitcoind.config.p2pbind }}
-    rpcbind={{ .Values.bitcoind.config.rpcbind }}
-    rpcallowip={{ .Values.bitcoind.config.rpcallowip }}
-    rpcport={{ .Values.bitcoind.ports.rpc }}
-    rpcuser={{ .Values.bitcoind.rpcUsername }}
-    rpcpassword={{ .Values.bitcoind.rpcPassword }}
-    {{- with .Values.bitcoind.config.additionalOptions }}
+    bind={{ .Values.bitcoind.p2p.bind }}
+    rpcbind={{ .Values.bitcoind.rpc.bind }}
+    rpcallowip={{ .Values.bitcoind.rpc.allowip }}
+    rpcport={{ .Values.bitcoind.rpc.port }}
+    rpcuser={{ .Values.bitcoind.rpc.username }}
+    rpcpassword={{ .Values.bitcoind.rpc.password }}
+    {{- with .Values.bitcoind.additionalOptions }}
     {{- . | nindent 4 }}
     {{- end }}

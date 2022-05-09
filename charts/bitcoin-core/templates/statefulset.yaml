@@ -69,17 +69,17 @@ spec:
               subPath: "entrypoint"
           ports:
             - name: "rpc"
-              containerPort: {{ .Values.bitcoind.ports.rpc }}
+              containerPort: {{ .Values.bitcoind.rpc.port }}
             - name: "p2p"
-              containerPort: {{ .Values.bitcoind.ports.p2p }}
+              containerPort: {{ .Values.bitcoind.p2p.port }}
           readinessProbe:
             tcpSocket:
-              port: {{ .Values.bitcoind.ports.rpc }}
+              port: {{ .Values.bitcoind.rpc.port }}
             initialDelaySeconds: 10
             periodSeconds: 10
           livenessProbe:
             tcpSocket:
-              port: {{ .Values.bitcoind.ports.rpc }}
+              port: {{ .Values.bitcoind.rpc.port }}
             initialDelaySeconds: 5
             periodSeconds: 30
         {{- if .Values.exporter.enabled }}

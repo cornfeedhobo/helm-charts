@@ -6,10 +6,10 @@ metadata:
   labels: {{- include "bitcoin-core.labels" . | nindent 4 }}
 spec:
   selector: {{- include "bitcoin-core.selectorLabels" . | nindent 4 }}
-  type: {{ .Values.bitcoind.service.rpc.type }}
+  type: {{ .Values.bitcoind.rpc.service }}
   ports:
     - name: "rpc"
-      port: {{ .Values.bitcoind.ports.rpc }}
+      port: {{ .Values.bitcoind.rpc.port }}
       targetPort: "rpc"
       protocol: "TCP"
 ---
@@ -20,10 +20,10 @@ metadata:
   labels: {{- include "bitcoin-core.labels" . | nindent 4 }}
 spec:
   selector: {{- include "bitcoin-core.selectorLabels" . | nindent 4 }}
-  type: {{ .Values.bitcoind.service.p2p.type }}
+  type: {{ .Values.bitcoind.p2p.service }}
   ports:
     - name: "p2p"
-      port: {{ .Values.bitcoind.ports.p2p }}
+      port: {{ .Values.bitcoind.p2p.port }}
       targetPort: "p2p"
       protocol: "TCP"
 

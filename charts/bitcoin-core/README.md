@@ -1,6 +1,6 @@
 # bitcoin-core
 
-![Version: 0.1.2](https://img.shields.io/badge/Version-0.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 22.0-alpine](https://img.shields.io/badge/AppVersion-22.0--alpine-informational?style=flat-square)
+![Version: 0.1.3](https://img.shields.io/badge/Version-0.1.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 22.0-alpine](https://img.shields.io/badge/AppVersion-22.0--alpine-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -9,21 +9,21 @@ A Helm chart for Kubernetes
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Affinity is a group of affinity scheduling rules More info: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#affinity-v1-core |
-| bitcoind.config.additionalOptions | string | `nil` |  |
-| bitcoind.config.p2pbind | string | `"0.0.0.0"` |  |
-| bitcoind.config.rpcallowip | string | `"0.0.0.0"` |  |
-| bitcoind.config.rpcbind | string | `"0.0.0.0"` |  |
+| bitcoind.additionalOptions | string | `nil` | Map of additional options to add to the config |
 | bitcoind.image.pullPolicy | string | `"IfNotPresent"` |  |
 | bitcoind.image.repository | string | `"ruimarinho/bitcoin-core"` |  |
 | bitcoind.image.tag | string | `""` |  |
-| bitcoind.ports.p2p | int | `8333` |  |
-| bitcoind.ports.rpc | int | `8332` |  |
+| bitcoind.p2p.bind | string | `"0.0.0.0"` |  |
+| bitcoind.p2p.port | int | `8333` |  |
+| bitcoind.p2p.service | string | `"NodePort"` |  |
 | bitcoind.resources | object | `{}` |  |
-| bitcoind.rpcPassword | string | `"rpcpassword"` | RPC password |
-| bitcoind.rpcUsername | string | `"rpcuser"` | RPC username |
+| bitcoind.rpc.allowip | string | `"0.0.0.0"` |  |
+| bitcoind.rpc.bind | string | `"0.0.0.0"` |  |
+| bitcoind.rpc.password | string | `"rpcpassword"` |  |
+| bitcoind.rpc.port | int | `8332` |  |
+| bitcoind.rpc.service | string | `"ClusterIP"` |  |
+| bitcoind.rpc.username | string | `"rpcuser"` |  |
 | bitcoind.securityContext | object | `{}` |  |
-| bitcoind.service.p2p | object | `{"type":"NodePort"}` | Change to NodePort or LoadBalancer to expose the p2p service to the public. |
-| bitcoind.service.rpc | object | `{"type":"ClusterIP"}` | Normally the RPC service is only exposed locally. |
 | exporter.enabled | bool | `false` |  |
 | exporter.image.pullPolicy | string | `"IfNotPresent"` |  |
 | exporter.image.repository | string | `"jvstein/bitcoin-prometheus-exporter"` |  |
