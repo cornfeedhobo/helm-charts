@@ -1,0 +1,15 @@
+apiVersion: v1
+entries:
+  bitcoin-core:
+  - apiVersion: v2
+    appVersion: 22.0-alpine
+    created: "2022-05-09T14:03:45.97903924Z"
+    description: A Helm chart for Kubernetes
+    digest: b02bb18343a228fbb75003a2d472ff68a34cf8d1fb193ef7e61e0445535b30a4
+    icon: https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg
+    name: bitcoin-core
+    type: application
+    urls:
+    - https://github.com/cornfeedhobo/helm-charts/releases/download/bitcoin-core-0.1.0/bitcoin-core-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-05-09T14:03:45.97904504Z"
