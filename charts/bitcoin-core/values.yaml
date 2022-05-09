@@ -1,0 +1,82 @@
+# Default values for bitcoin-core.
+
+# -- NodeSelector is a selector which must be true for the pod to fit on a node.
+# Selector which must match a node's labels for the pod to be scheduled on that node.
+# More info: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+nodeSelector: {}
+
+# -- Affinity is a group of affinity scheduling rules
+# More info: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#affinity-v1-core
+affinity: {}
+
+# -- If specified, the pod's tolerations.
+# More info: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#toleration-v1-core
+tolerations: []
+
+# -- Pod Annotations
+# More info: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#objectmeta-v1-meta
+podAnnotations: {}
+
+# -- SecurityContext holds pod-level security attributes and common container settings.
+# Optional: Defaults to empty. See type description for default values of each field.
+# More info: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#podsecuritycontext-v1-core
+podSecurityContext: {}
+  # fsGroup: 2000
+
+# -- Secret needed to pull from a private registry
+# More info: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+imagePullSecrets: []
+
+persistence:
+  enabled: true
+  ## Persistent Volume Storage Class
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  # storageClass: "-"
+  accessMode: "ReadWriteOnce"
+  size: "500Gi"
+  existingClaim: null
+
+
+#####
+## Containers
+bitcoind:
+  image:
+    repository: "ruimarinho/bitcoin-core"
+    # Defaults to chart app version.
+    tag: ""
+    pullPolicy: "IfNotPresent"
+  securityContext: {}
+  resources: {}
+  config:
+    bind: "0.0.0.0"
+    rpcbind: "0.0.0.0"
+    rpcallowip: "0.0.0.0"
+    additionalOptions: null
+  ports:
+    rpc: 8332
+    p2p: 8333
+  service:
+    # -- Normally the RPC service is only exposed locally.
+    rpc:
+      type: "ClusterIP"
+    # -- Change to NodePort or LoadBalancer to expose the p2p service to the public.
+    p2p:
+      type: "NodePort"
+  # -- RPC username
+  rpcUsername: "rpcuser"
+  # -- RPC password
+  rpcPassword: "rpcpassword"
+
+exporter:
+  enabled: false
+  image:
+    repository: "jvstein/bitcoin-prometheus-exporter"
+    tag: "v0.7.0"
+    pullPolicy: "IfNotPresent"
+  securityContext: {}
+  resources: {}

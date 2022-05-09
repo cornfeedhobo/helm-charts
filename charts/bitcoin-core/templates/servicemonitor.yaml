@@ -1,0 +1,24 @@
+{{- if .Capabilities.APIVersions.Has "monitoring.coreos.com/v1/ServiceMonitor" }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "bitcoin-core.name" . | quote }}
+  labels: {{- include "bitcoin-core.labels" . | nindent 4 }}
+spec:
+  jobLabel: {{ include "bitcoin-core.name" . | quote }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace | quote }}
+  selector:
+    matchLabels: {{- include "bitcoin-core.selectorLabels" . | nindent 6 }}
+  endpoints:
+    - path: "/"
+      port: "rpc"
+      interval: "15s"
+    {{- if .Values.exporter.enabled }}
+    - path: "/"
+      port: "exporter"
+      interval: "15s"
+    {{- end }}
+{{- end }}

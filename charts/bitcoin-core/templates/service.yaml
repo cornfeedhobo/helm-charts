@@ -1,0 +1,29 @@
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: {{ print (include "bitcoin-core.name" .) "-rpc" | quote }}
+  labels: {{- include "bitcoin-core.labels" . | nindent 4 }}
+spec:
+  selector: {{- include "bitcoin-core.selectorLabels" . | nindent 4 }}
+  type: {{ .Values.bitcoind.service.rpc.type }}
+  ports:
+    - name: "rpc"
+      port: {{ .Values.bitcoind.ports.rpc }}
+      targetPort: "rpc"
+      protocol: "TCP"
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: {{ print (include "bitcoin-core.name" .) "-p2p" | quote }}
+  labels: {{- include "bitcoin-core.labels" . | nindent 4 }}
+spec:
+  selector: {{- include "bitcoin-core.selectorLabels" . | nindent 4 }}
+  type: {{ .Values.bitcoind.service.p2p.type }}
+  ports:
+    - name: "p2p"
+      port: {{ .Values.bitcoind.ports.p2p }}
+      targetPort: "p2p"
+      protocol: "TCP"
+

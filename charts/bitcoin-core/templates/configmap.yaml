@@ -1,0 +1,31 @@
+---
+apiVersion: "v1"
+kind: "ConfigMap"
+metadata:
+  name: {{ print (include "bitcoin-core.name" .) "-entrypoint" | quote }}
+  labels: {{- include "bitcoin-core.labels" . | nindent 4 }}
+data:
+  entrypoint: |-
+    #!/bin/ash
+    set -ex
+    exec su-exec bitcoin bitcoind -datadir="$BITCOIN_DATA"
+
+---
+apiVersion: "v1"
+kind: "ConfigMap"
+metadata:
+  name: {{ print (include "bitcoin-core.name" .) "-bitcoind" | quote }}
+  labels: {{- include "bitcoin-core.labels" . | nindent 4 }}
+data:
+  bitcoin.conf: |
+    printtoconsole=1
+    server=1
+    bind={{ .Values.bitcoind.config.bind }}
+    rpcbind={{ .Values.bitcoind.config.rpcbind }}
+    rpcallowip={{ .Values.bitcoind.config.rpcallowip }}
+    rpcport={{ .Values.bitcoind.ports.rpc }}
+    rpcuser={{ .Values.bitcoind.rpcUsername }}
+    rpcpassword={{ .Values.bitcoind.rpcPassword }}
+    {{- with .Values.bitcoind.config.additionalOptions }}
+    {{- . | nindent 4 }}
+    {{- end }}
