@@ -17,7 +17,7 @@ metadata:
   name: {{ print (include "bitcoin-core.name" .) "-bitcoind" | quote }}
   labels: {{- include "bitcoin-core.labels" . | nindent 4 }}
 data:
-  bitcoin.conf: |
+  bitcoin.conf: |-
     printtoconsole=1
     server=1
     bind={{ .Values.bitcoind.config.bind }}
