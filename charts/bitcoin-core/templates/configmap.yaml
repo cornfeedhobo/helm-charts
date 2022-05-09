@@ -5,7 +5,7 @@ metadata:
   name: {{ print (include "bitcoin-core.name" .) "-entrypoint" | quote }}
   labels: {{- include "bitcoin-core.labels" . | nindent 4 }}
 data:
-  entrypoint: |-
+  entrypoint: |
     #!/bin/ash
     set -ex
     exec su-exec bitcoin bitcoind -datadir="$BITCOIN_DATA"
@@ -17,7 +17,7 @@ metadata:
   name: {{ print (include "bitcoin-core.name" .) "-bitcoind" | quote }}
   labels: {{- include "bitcoin-core.labels" . | nindent 4 }}
 data:
-  bitcoin.conf: |-
+  bitcoin.conf: |
     printtoconsole=1
     server=1
     bind={{ .Values.bitcoind.p2p.bind }}
