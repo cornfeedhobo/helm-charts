@@ -102,9 +102,9 @@ spec:
             - name: "REFRESH_SECONDS"
               value: "1"
             - name: "LOG_LEVEL"
-              value: "INFO"
+              value: "WARN"
             - name: "BITCOIN_RPC_HOST"
-              value: "bitcoin-core"
+              value: {{ include "bitcoin-core.name" . | quote }}
             - name: "BITCOIN_CONF_PATH"
               value: "/home/bitcoin/.bitcoin/bitcoin.conf"
           ports:
