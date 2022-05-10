@@ -8,7 +8,7 @@ metadata:
     {{- include "bitcoin-core.labels" . | nindent 4 }}
     {{ .Values.exporter.grafana.sidecarLabel }}: "1"
 data:
-  bitcoin-core.json: |-
+  bitcoin-core-dashboard.json: |-
     {
       "__inputs": [
         {
@@ -990,7 +990,7 @@ data:
         ]
       },
       "timezone": "",
-      "title": "Bitcoin",
+      "title": "Bitcoin Core",
       "uid": "OTLC2jHWz",
       "version": 1
     }
