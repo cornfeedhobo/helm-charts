@@ -6,7 +6,7 @@ metadata:
   labels: {{- include "bitcoin-core.labels" . | nindent 4 }}
 spec:
   selector: {{- include "bitcoin-core.selectorLabels" . | nindent 4 }}
-  type: {{ .Values.bitcoind.rpc.service }}
+  type: {{ .Values.bitcoind.rpc.service | quote }}
   ports:
     - name: "rpc"
       port: {{ .Values.bitcoind.rpc.port }}
@@ -26,7 +26,7 @@ metadata:
   labels: {{- include "bitcoin-core.labels" . | nindent 4 }}
 spec:
   selector: {{- include "bitcoin-core.selectorLabels" . | nindent 4 }}
-  type: {{ .Values.bitcoind.p2p.service }}
+  type: {{ .Values.bitcoind.p2p.service | quote }}
   ports:
     - name: "p2p"
       port: {{ .Values.bitcoind.p2p.port }}

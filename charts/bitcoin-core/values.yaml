@@ -74,3 +74,8 @@ exporter:
     pullPolicy: "IfNotPresent"
   securityContext: {}
   resources: {}
+  # -- Configure grafana dashboards when using the supporting sidecar.
+  # More info: https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md#sidecar-for-dashboards
+  grafana:
+    createDashboardConfigMap: false
+    sidecarLabel: "grafana_dashboard"
