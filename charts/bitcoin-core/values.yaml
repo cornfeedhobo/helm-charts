@@ -77,5 +77,9 @@ exporter:
   # -- Configure grafana dashboards when using the supporting sidecar.
   # More info: https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md#sidecar-for-dashboards
   grafana:
+    # -- toggle the creation of the grafana dashboard
     createDashboardConfigMap: false
+    # -- grafana's prometheus datasource name
+    datasourceName: "Prometheus"
+    # -- label for the sidecar to pick up the dashboard config
     sidecarLabel: "grafana_dashboard"

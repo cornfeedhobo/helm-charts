@@ -10,36 +10,6 @@ metadata:
 data:
   bitcoin-core-dashboard.json: |-
     {
-      "__inputs": [
-        {
-          "name": "DS_PROMETHEUS",
-          "label": "prometheus",
-          "description": "",
-          "type": "datasource",
-          "pluginId": "prometheus",
-          "pluginName": "Prometheus"
-        }
-      ],
-      "__requires": [
-        {
-          "type": "grafana",
-          "id": "grafana",
-          "name": "Grafana",
-          "version": "6.4.1"
-        },
-        {
-          "type": "panel",
-          "id": "graph",
-          "name": "Graph",
-          "version": ""
-        },
-        {
-          "type": "datasource",
-          "id": "prometheus",
-          "name": "Prometheus",
-          "version": "1.0.0"
-        }
-      ],
       "annotations": {
         "list": [
           {
@@ -56,7 +26,6 @@ data:
       "editable": true,
       "gnetId": null,
       "graphTooltip": 1,
-      "id": null,
       "links": [],
       "panels": [
         {
@@ -64,8 +33,14 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "{{ .Values.exporter.grafana.datasourceName }}",
           "description": "Number of blocks created per day using different trailing rates.",
+          "fieldConfig": {
+            "defaults": {
+              "links": []
+            },
+            "overrides": []
+          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -74,6 +49,7 @@ data:
             "x": 0,
             "y": 0
           },
+          "hiddenSeries": false,
           "id": 18,
           "legend": {
             "avg": false,
@@ -88,9 +64,10 @@ data:
           "linewidth": 1,
           "nullPointMode": "null",
           "options": {
-            "dataLinks": []
+            "alertThreshold": true
           },
           "percentage": false,
+          "pluginVersion": "7.5.11",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -169,8 +146,14 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "{{ .Values.exporter.grafana.datasourceName }}",
           "description": "Difficulty value",
+          "fieldConfig": {
+            "defaults": {
+              "links": []
+            },
+            "overrides": []
+          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -179,6 +162,7 @@ data:
             "x": 12,
             "y": 0
           },
+          "hiddenSeries": false,
           "id": 6,
           "legend": {
             "avg": false,
@@ -194,9 +178,10 @@ data:
           "links": [],
           "nullPointMode": "null",
           "options": {
-            "dataLinks": []
+            "alertThreshold": true
           },
           "percentage": false,
+          "pluginVersion": "7.5.11",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -260,8 +245,14 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "{{ .Values.exporter.grafana.datasourceName }}",
           "description": "Estimated network hashes per second",
+          "fieldConfig": {
+            "defaults": {
+              "links": []
+            },
+            "overrides": []
+          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -270,6 +261,7 @@ data:
             "x": 0,
             "y": 8
           },
+          "hiddenSeries": false,
           "id": 8,
           "legend": {
             "avg": false,
@@ -285,9 +277,10 @@ data:
           "links": [],
           "nullPointMode": "null",
           "options": {
-            "dataLinks": []
+            "alertThreshold": true
           },
           "percentage": false,
+          "pluginVersion": "7.5.11",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -358,8 +351,14 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "{{ .Values.exporter.grafana.datasourceName }}",
           "description": "Value of the block transactions in BTC.",
+          "fieldConfig": {
+            "defaults": {
+              "links": []
+            },
+            "overrides": []
+          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -368,6 +367,7 @@ data:
             "x": 12,
             "y": 8
           },
+          "hiddenSeries": false,
           "id": 2,
           "legend": {
             "avg": false,
@@ -383,9 +383,10 @@ data:
           "links": [],
           "nullPointMode": "null",
           "options": {
-            "dataLinks": []
+            "alertThreshold": true
           },
           "percentage": false,
+          "pluginVersion": "7.5.11",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -448,8 +449,14 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "{{ .Values.exporter.grafana.datasourceName }}",
           "description": "Number of tips seen in the chain.",
+          "fieldConfig": {
+            "defaults": {
+              "links": []
+            },
+            "overrides": []
+          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -458,6 +465,7 @@ data:
             "x": 0,
             "y": 16
           },
+          "hiddenSeries": false,
           "id": 12,
           "legend": {
             "avg": false,
@@ -473,9 +481,10 @@ data:
           "links": [],
           "nullPointMode": "null",
           "options": {
-            "dataLinks": []
+            "alertThreshold": true
           },
           "percentage": false,
+          "pluginVersion": "7.5.11",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -540,8 +549,14 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "{{ .Values.exporter.grafana.datasourceName }}",
           "description": "Sent and received traffic rates",
+          "fieldConfig": {
+            "defaults": {
+              "links": []
+            },
+            "overrides": []
+          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -550,6 +565,7 @@ data:
             "x": 12,
             "y": 16
           },
+          "hiddenSeries": false,
           "id": 10,
           "legend": {
             "avg": false,
@@ -565,9 +581,10 @@ data:
           "links": [],
           "nullPointMode": "null",
           "options": {
-            "dataLinks": []
+            "alertThreshold": true
           },
           "percentage": false,
+          "pluginVersion": "7.5.11",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -638,8 +655,14 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "{{ .Values.exporter.grafana.datasourceName }}",
           "description": "The estimated smart fee for confirmation of transactions in a given number of blocks.",
+          "fieldConfig": {
+            "defaults": {
+              "links": []
+            },
+            "overrides": []
+          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -648,6 +671,7 @@ data:
             "x": 0,
             "y": 24
           },
+          "hiddenSeries": false,
           "id": 4,
           "legend": {
             "avg": false,
@@ -663,9 +687,10 @@ data:
           "links": [],
           "nullPointMode": "null",
           "options": {
-            "dataLinks": []
+            "alertThreshold": true
           },
           "percentage": false,
+          "pluginVersion": "7.5.11",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -750,8 +775,14 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "{{ .Values.exporter.grafana.datasourceName }}",
           "description": "The Bitcoin protocol and server versions.",
+          "fieldConfig": {
+            "defaults": {
+              "links": []
+            },
+            "overrides": []
+          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -760,6 +791,7 @@ data:
             "x": 12,
             "y": 24
           },
+          "hiddenSeries": false,
           "id": 14,
           "legend": {
             "avg": false,
@@ -775,9 +807,10 @@ data:
           "links": [],
           "nullPointMode": "null",
           "options": {
-            "dataLinks": []
+            "alertThreshold": true
           },
           "percentage": false,
+          "pluginVersion": "7.5.11",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -857,8 +890,14 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "{{ .Values.exporter.grafana.datasourceName }}",
           "description": "Number of peers that have been banned and the reason for the ban.",
+          "fieldConfig": {
+            "defaults": {
+              "links": []
+            },
+            "overrides": []
+          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -867,6 +906,7 @@ data:
             "x": 0,
             "y": 32
           },
+          "hiddenSeries": false,
           "id": 16,
           "legend": {
             "avg": false,
@@ -882,9 +922,10 @@ data:
           "links": [],
           "nullPointMode": "null",
           "options": {
-            "dataLinks": []
+            "alertThreshold": true
           },
           "percentage": false,
+          "pluginVersion": "7.5.11",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -897,7 +938,7 @@ data:
               "expr": "count(bitcoin_banned_until) by (reason)",
               "format": "time_series",
               "intervalFactor": 1,
-              "legendFormat": "ban - {{ `{{ reason }}` }}",
+              "legendFormat": "ban - {{ reason }}",
               "refId": "B"
             },
             {
@@ -952,7 +993,7 @@ data:
         }
       ],
       "refresh": "5m",
-      "schemaVersion": 20,
+      "schemaVersion": 27,
       "style": "dark",
       "tags": [
         "bitcoin"
@@ -994,4 +1035,3 @@ data:
       "uid": "OTLC2jHWz",
       "version": 1
     }
-{{- end }}
