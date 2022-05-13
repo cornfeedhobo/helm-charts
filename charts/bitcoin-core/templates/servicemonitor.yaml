@@ -6,7 +6,6 @@ metadata:
   name: {{ include "bitcoin-core.name" . | quote }}
   labels: {{- include "bitcoin-core.labels" . | nindent 4 }}
 spec:
-  jobLabel: {{ include "bitcoin-core.name" . | quote }}
   namespaceSelector:
     matchNames:
       - {{ .Release.Namespace | quote }}
