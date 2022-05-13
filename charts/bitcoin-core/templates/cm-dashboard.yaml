@@ -938,7 +938,7 @@ data:
               "expr": "count(bitcoin_banned_until) by (reason)",
               "format": "time_series",
               "intervalFactor": 1,
-              "legendFormat": "ban - {{ reason }}",
+              "legendFormat": "ban - {{ `{{ reason }}` }}",
               "refId": "B"
             },
             {
