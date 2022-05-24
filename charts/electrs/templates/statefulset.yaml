@@ -1,0 +1,140 @@
+---
+# https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#statefulsetspec-v1-apps
+apiVersion: "apps/v1"
+kind: "StatefulSet"
+metadata:
+  name: {{ include "electrs.fullname" . | quote }}
+  {{- with (merge .Values.global.labels .Values.controller.labels (include "electrs.labels" . | fromYaml)) }}
+  labels:
+    {{- range $k, $v := . }}
+    {{- $v = tpl $v $ }}
+    {{ $k }}: {{ $v | quote }}
+    {{- end }}
+  {{- end }}
+  {{- with (merge .Values.global.annotations .Values.controller.annotations) }}
+  annotations:
+    {{- range $k, $v := . }}
+    {{- $v = tpl $v $ }}
+    {{ $k }}: {{ $v | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels: {{- include "electrs.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "electrs.fullname" . | quote }}
+  revisionHistoryLimit: {{ .Values.controller.revisionHistoryLimit }}
+  template:
+    metadata:
+      {{- with (merge .Values.global.labels .Values.controller.labels (include "electrs.labels" . | fromYaml)) }}
+      labels:
+        {{- range $k, $v := . }}
+        {{- $v = tpl $v $ }}
+        {{ $k }}: {{ $v | quote }}
+        {{- end }}
+      {{- end }}
+      {{- with (merge .Values.global.annotations .Values.pod.annotations (include "electrs.prometheusAnnotations" . | fromYaml)) }}
+      annotations:
+        {{- range $k, $v := . }}
+        {{- $v = tpl $v $ }}
+        {{ $k }}: {{ $v | quote }}
+        {{- end }}
+      {{- end }}
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.pod.nodeSelector }}
+      nodeSelector: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.pod.affinity }}
+      affinity: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.pod.tolerations }}
+      tolerations: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.pod.securityContext }}
+      securityContext: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: "electrs"
+          image: "{{ .Values.electrs.image.repo }}:{{ .Values.electrs.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: "{{ .Values.electrs.image.pullPolicy }}"
+          {{- with .Values.electrs.securityContext }}
+          securityContext: {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.electrs.resources }}
+          resources: {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: "electrum"
+              containerPort: {{ .Values.electrs.ports.electrum }}
+            - name: "exporter"
+              containerPort: {{ .Values.electrs.ports.exporter }}
+          readinessProbe:
+            tcpSocket:
+              port: "electrum"
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: "electrum"
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          volumeMounts:
+            - name: "config"
+              mountPath: "/etc/electrs/config.toml"
+              subPath: "config.toml"
+            - name: "data"
+              mountPath: "/data"
+            {{- if .Values.electrs.bitcoinPVC }}
+            - name: "bitcoind"
+              mountPath: "/data/.bitcoin"
+              readOnly: true
+            {{- end }}
+      volumes:
+        - name: "config"
+          configMap:
+            name: {{ print (include "electrs.fullname" .) "-electrs" | quote }}
+        {{- if not .Values.persistence.enabled }}
+        - name: "data"
+          emptyDir: {}
+        {{- else if .Values.persistence.existingClaim }}
+        - name: "data"
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim }}
+        {{- end }}
+        {{- if .Values.electrs.bitcoinPVC }}
+        - name: "bitcoind"
+          persistentVolumeClaim:
+            claimName: {{ .Values.electrs.bitcoinPVC | quote }}
+            readOnly: true
+        {{- end }}
+  {{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
+  volumeClaimTemplates:
+    -
+      metadata:
+        name: "data"
+        {{- with (merge .Values.global.labels .Values.persistence.labels (include "electrs.labels" . | fromYaml)) }}
+        labels:
+          {{- range $k, $v := . }}
+          {{- $v = tpl $v $ }}
+          {{ $k }}: {{ $v | quote }}
+          {{- end }}
+        {{- end }}
+        {{- with (merge .Values.global.annotations .Values.persistence.annotations) }}
+        annotations:
+          {{- range $k, $v := . }}
+          {{- $v = tpl $v $ }}
+          {{ $k }}: {{ $v | quote }}
+          {{- end }}
+        {{- end }}
+      spec:
+        accessModes:
+          - {{ .Values.persistence.accessMode | quote }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | quote }}
+        {{- if .Values.persistence.storageClass }}
+        storageClassName: {{ .Values.persistence.storageClass }}
+        {{- end }}
+  {{- end }}

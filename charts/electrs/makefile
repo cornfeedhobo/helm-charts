@@ -1,10 +1,11 @@
 .PHONY: debug
 
 debug:
+	@if [ ! -r debug-values.yaml ]; then touch debug-values.yaml; fi
 	helm template $(shell basename $${PWD}) . \
+		-n bitcoin-system \
 		-f debug-values.yaml \
 		--debug \
-		--api-versions monitoring.coreos.com/v1/PodMonitor \
 		--api-versions monitoring.coreos.com/v1/ServiceMonitor \
 		--namespace $(shell basename $${PWD}) \
 		> debug-render.yaml
@@ -19,5 +20,6 @@ lint:
 		-n bitcoin-system \
 		-f debug-values.yaml \
 		--debug \
+		--api-versions monitoring.coreos.com/v1/ServiceMonitor \
 		--namespace $(shell basename $${PWD}) \
 		| kubeconform

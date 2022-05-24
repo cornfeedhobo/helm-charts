@@ -1,0 +1,32 @@
+{{- if and .Values.podMonitor.enabled (.Capabilities.APIVersions.Has "monitoring.coreos.com/v1/PodMonitor") }}
+---
+apiVersion: "monitoring.coreos.com/v1"
+kind: "PodMonitor"
+metadata:
+  name: {{ include "electrs.fullname" . | quote }}
+  {{- with (merge .Values.global.labels .Values.podMonitor.labels (include "electrs.labels" . | fromYaml)) }}
+  labels:
+    {{- range $k, $v := . }}
+    {{- $v = tpl $v $ }}
+    {{ $k }}: {{ $v | quote }}
+    {{- end }}
+  {{- end }}
+  {{- with (merge .Values.global.annotations .Values.podMonitor.annotations) }}
+  annotations:
+    {{- range $k, $v := . }}
+    {{- $v = tpl $v $ }}
+    {{ $k }}: {{ $v | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace | quote }}
+  selector:
+    matchLabels: {{- include "electrs.selectorLabels" . | nindent 6 }}
+  podMetricsEndpoints:
+    - port: "exporter"
+      path: "/metrics"
+      interval: {{ .Values.podMonitor.interval | quote }}
+      scrapeTimeout: {{ .Values.podMonitor.timeout | quote }}
+{{- end }}

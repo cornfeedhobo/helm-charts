@@ -2,102 +2,110 @@
 apiVersion: "apps/v1"
 kind: "StatefulSet"
 metadata:
-  name: {{ include "bitcoin-core.name" . | quote }}
-  labels: {{- include "bitcoin-core.labels" . | nindent 4 }}
+  name: {{ include "bitcoin-core.fullname" . | quote }}
+  {{- with (merge .Values.global.labels .Values.controller.labels (include "bitcoin-core.labels" . | fromYaml)) }}
+  labels:
+    {{- range $k, $v := . }}
+    {{- $v = tpl $v $ }}
+    {{ $k }}: {{ $v | quote }}
+    {{- end }}
+  {{- end }}
+  {{- with (merge .Values.global.annotations .Values.controller.annotations) }}
+  annotations:
+    {{- range $k, $v := . }}
+    {{- $v = tpl $v $ }}
+    {{ $k }}: {{ $v | quote }}
+    {{- end }}
+  {{- end }}
 spec:
   serviceName: {{ include "bitcoin-core.name" . | quote }}
   selector:
     matchLabels: {{- include "bitcoin-core.selectorLabels" . | nindent 6 }}
-  replicas: 1
-  updateStrategy:
-    type: "RollingUpdate"
+  revisionHistoryLimit: {{ .Values.controller.revisionHistoryLimit }}
   template:
     metadata:
       name: {{ include "bitcoin-core.fullname" . | quote }}
-      labels: {{- include "bitcoin-core.labels" . | nindent 8 }}
-      {{- if or .Values.podAnnotations .Values.exporter.enabled }}
-      annotations:
-        {{- with .Values.podAnnotations }}
-        {{- toYaml . | nindent 8 }}
+      {{- with (merge .Values.global.labels .Values.pod.labels (include "bitcoin-core.labels" . | fromYaml)) }}
+      labels:
+        {{- range $k, $v := . }}
+        {{- $v = tpl $v $ }}
+        {{ $k }}: {{ $v | quote }}
         {{- end }}
-        {{- if .Values.exporter.enabled }}
-        prometheus.io/port: "9332"
-        prometheus.io/scrape: "true"
+      {{- end }}
+      {{- with (merge .Values.global.annotations .Values.pod.annotations (include "bitcoin-core.prometheusAnnotations" . | fromYaml)) }}
+      annotations:
+        {{- range $k, $v := . }}
+        {{- $v = tpl $v $ }}
+        {{ $k }}: {{ $v | quote }}
         {{- end }}
       {{- end }}
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets: {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
+      {{- with .Values.pod.nodeSelector }}
+      nodeSelector: {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
+      {{- with .Values.pod.affinity }}
+      affinity: {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
+      {{- with .Values.pod.tolerations }}
+      tolerations: {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.podSecurityContext }}
-      securityContext:
-        {{- toYaml . | nindent 8 }}
+      {{- with .Values.pod.securityContext }}
+      securityContext: {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
         - name: "bitcoin-core"
           {{- with .Values.bitcoind.securityContext }}
-          securityContext:
-            {{- toYaml . | nindent 12 }}
+          securityContext: {{- toYaml . | nindent 12 }}
           {{- end }}
           image: {{ print .Values.bitcoind.image.repository ":" (.Values.bitcoind.image.tag | default .Chart.AppVersion) | quote }}
           imagePullPolicy: {{ .Values.bitcoind.image.pullPolicy | quote }}
           {{- with .Values.bitcoind.resources }}
-          resources:
-            {{- toYaml . | nindent 12 }}
+          resources: {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
-            - name: "data"
-              mountPath: "/home/bitcoin/.bitcoin"
             - name: "config"
               mountPath: "/home/bitcoin/.bitcoin/bitcoin.conf"
               subPath: "bitcoin.conf"
+            - name: "data"
+              mountPath: "/home/bitcoin/.bitcoin"
             - name: "entrypoint"
               mountPath: "/entrypoint.sh"
               subPath: "entrypoint"
           ports:
             - name: "rpc"
-              containerPort: {{ .Values.bitcoind.rpc.port }}
+              containerPort: {{ .Values.bitcoind.ports.rpc }}
             - name: "p2p"
-              containerPort: {{ .Values.bitcoind.p2p.port }}
+              containerPort: {{ .Values.bitcoind.ports.p2p }}
           readinessProbe:
             tcpSocket:
-              port: {{ .Values.bitcoind.rpc.port }}
+              port: {{ .Values.bitcoind.ports.rpc }}
             initialDelaySeconds: 10
             periodSeconds: 10
           livenessProbe:
             tcpSocket:
-              port: {{ .Values.bitcoind.rpc.port }}
+              port: {{ .Values.bitcoind.ports.rpc }}
             initialDelaySeconds: 5
             periodSeconds: 30
         {{- if .Values.exporter.enabled }}
         - name: "bitcoin-core-exporter"
           {{- with .Values.exporter.securityContext }}
-          securityContext:
-            {{- toYaml . | nindent 12 }}
+          securityContext: {{- toYaml . | nindent 12 }}
           {{- end }}
           image: {{ print .Values.exporter.image.repository ":" .Values.exporter.image.tag | quote }}
           imagePullPolicy: {{ .Values.exporter.image.pullPolicy | quote }}
           {{- with .Values.exporter.resources }}
-          resources:
-            {{- toYaml . | nindent 12 }}
+          resources: {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
             - name: "config"
               mountPath: "/home/bitcoin/.bitcoin/bitcoin.conf"
               subPath: "bitcoin.conf"
+            - name: "data"
+              mountPath: "/home/bitcoin/.bitcoin"
+              readOnly: true
           env:
             - name: "REFRESH_SECONDS"
               value: "1"
@@ -123,25 +131,47 @@ spec:
             failureThreshold: 6
         {{- end }}
       volumes:
-        - name: "entrypoint"
-          configMap:
-            name: {{ print (include "bitcoin-core.name" .) "-entrypoint" | quote }}
-            defaultMode: 0777
         - name: "config"
           configMap:
-            name: {{ print (include "bitcoin-core.name" .) "-bitcoind" | quote }}
+            name: {{ print (include "bitcoin-core.fullname" .) "-bitcoind" | quote }}
         {{- if not .Values.persistence.enabled }}
         - name: "data"
           emptyDir: {}
+        {{- else if .Values.persistence.existingClaim }}
+        - name: "data"
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim }}
         {{- end }}
-  {{- if .Values.persistence.enabled }}
+        - name: "entrypoint"
+          configMap:
+            name: {{ print (include "bitcoin-core.fullname" .) "-entrypoint" | quote }}
+            defaultMode: 0777
+  {{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
   volumeClaimTemplates:
-    - metadata:
+    -
+      metadata:
         name: "data"
+        {{- with (merge .Values.global.labels .Values.persistence.labels (include "bitcoin-core.labels" . | fromYaml)) }}
+        labels:
+          {{- range $k, $v := . }}
+          {{- $v = tpl $v $ }}
+          {{ $k }}: {{ $v | quote }}
+          {{- end }}
+        {{- end }}
+        {{- with (merge .Values.global.annotations .Values.persistence.annotations) }}
+        annotations:
+          {{- range $k, $v := . }}
+          {{- $v = tpl $v $ }}
+          {{ $k }}: {{ $v | quote }}
+          {{- end }}
+        {{- end }}
       spec:
         accessModes:
           - {{ .Values.persistence.accessMode | quote }}
         resources:
           requests:
             storage: {{ .Values.persistence.size | quote }}
+        {{- if .Values.persistence.storageClass }}
+        storageClassName: {{ .Values.persistence.storageClass }}
+        {{- end }}
   {{- end }}

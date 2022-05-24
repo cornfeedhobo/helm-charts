@@ -2,34 +2,32 @@
 apiVersion: "v1"
 kind: "Service"
 metadata:
-  name: {{ include "bitcoin-core.name" . | quote }}
-  labels: {{- include "bitcoin-core.labels" . | nindent 4 }}
-spec:
-  selector: {{- include "bitcoin-core.selectorLabels" . | nindent 4 }}
-  type: {{ .Values.bitcoind.rpc.service | quote }}
-  ports:
-    - name: "rpc"
-      port: {{ .Values.bitcoind.rpc.port }}
-      targetPort: "rpc"
-      protocol: "TCP"
-    {{- if .Values.exporter.enabled }}
-    - name: "exporter"
-      port: 9332
-      targetPort: "exporter"
-      protocol: "TCP"
+  name: {{ print (include "bitcoin-core.fullname" .) | quote }}
+  {{- with (merge .Values.global.labels .Values.service.labels (include "bitcoin-core.labels" . | fromYaml)) }}
+  labels:
+    {{- range $k, $v := . }}
+    {{- $v = tpl $v $ }}
+    {{ $k }}: {{ $v | quote }}
     {{- end }}
----
-apiVersion: "v1"
-kind: "Service"
-metadata:
-  name: {{ print (include "bitcoin-core.name" .) "-p2p" | quote }}
-  labels: {{- include "bitcoin-core.labels" . | nindent 4 }}
+  {{- end }}
+  {{- with (merge .Values.global.annotations .Values.service.annotations) }}
+  annotations:
+    {{- range $k, $v := . }}
+    {{- $v = tpl $v $ }}
+    {{ $k }}: {{ $v | quote }}
+    {{- end }}
+  {{- end }}
 spec:
   selector: {{- include "bitcoin-core.selectorLabels" . | nindent 4 }}
-  type: {{ .Values.bitcoind.p2p.service | quote }}
+  type: {{ .Values.service.type | quote }}
   ports:
+    {{- if .Values.service.enableP2p }}
     - name: "p2p"
-      port: {{ .Values.bitcoind.p2p.port }}
+      port: {{ .Values.bitcoind.ports.p2p }}
       targetPort: "p2p"
-      protocol: "TCP"
-
+    {{- end }}
+    {{- if .Values.service.enableRpc }}
+    - name: "rpc"
+      port: {{ .Values.bitcoind.ports.rpc }}
+      targetPort: "rpc"
+    {{- end }}

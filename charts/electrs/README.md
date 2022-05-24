@@ -1,6 +1,6 @@
-# bitcoin-core
+# electrs
 
-![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 22.0-alpine](https://img.shields.io/badge/AppVersion-22.0--alpine-informational?style=flat-square)
+![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.9.4](https://img.shields.io/badge/AppVersion-v0.9.4-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -8,30 +8,21 @@ A Helm chart for Kubernetes
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| bitcoind.config | object | `{"bind":"0.0.0.0","rpcallowip":"0.0.0.0/0","rpcbind":"0.0.0.0","rpcport":"{{ .Values.bitcoind.ports.rpc }}"}` | bitcoind config file settings. Helm templates can be used. |
-| bitcoind.image.pullPolicy | string | `"IfNotPresent"` | Configure image pull policy. |
-| bitcoind.image.repository | string | `"ruimarinho/bitcoin-core"` | Configure image repo. |
-| bitcoind.image.tag | string | `""` | Configure image tag, defaults to .Chart.AppVersion. |
-| bitcoind.ports.p2p | int | `8333` | Configure the P2P port. |
-| bitcoind.ports.rpc | int | `8332` | Configure the RPC port. |
-| bitcoind.resources | object | `{}` | Configure pod resources. |
-| bitcoind.securityContext | object | `{}` | Configure the Security Context. |
 | configMap.annotations | object | `{}` | Set configMap annotations. Helm templates can be used. |
 | configMap.labels | object | `{}` | Set configMap labels. Helm templates can be used. |
 | controller.annotations | object | `{}` | Configure the statefulset annotations. Helm templates can be used. |
 | controller.labels | object | `{}` | Configure the statefulset labels. Helm templates can be used. |
 | controller.revisionHistoryLimit | int | `3` | ReplicaSet revision history limit. |
-| exporter.enabled | bool | `false` | Toggle the prometheus exporter sidecar. |
-| exporter.grafana | object | `{"createDashboardConfigMap":false,"datasourceName":"Prometheus","sidecarLabel":"grafana_dashboard"}` | Configure grafana dashboards when using the supporting sidecar. More info: https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md#sidecar-for-dashboards |
-| exporter.grafana.createDashboardConfigMap | bool | `false` | toggle the creation of the grafana dashboard. |
-| exporter.grafana.datasourceName | string | `"Prometheus"` | grafana's prometheus datasource name. |
-| exporter.grafana.sidecarLabel | string | `"grafana_dashboard"` | label for the sidecar to pick up the dashboard config. |
-| exporter.image.pullPolicy | string | `"IfNotPresent"` | Configure image pull policy. |
-| exporter.image.repository | string | `"jvstein/bitcoin-prometheus-exporter"` | Configure image repo. |
-| exporter.image.tag | string | `"v0.7.0"` | Configure image tag. |
-| exporter.resources | object | `{}` | Configure pod resources. |
-| exporter.securityContext | object | `{}` | Configure the Security Context. |
-| global.annotations | object | `{}` | Set additional global annotations. Helm templates can be used. More info: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#objectmeta-v1-meta |
+| electrs.bitcoinPVC | string | `""` | Set the name of the PVC used by the bitcoin daemon. If set, it will be mounted into the electrs container. |
+| electrs.config | object | `{"daemon_p2p_addr":"bitcoin-core:8333","daemon_rpc_addr":"bitcoin-core:8332","db_dir":"/data","electrum_rpc_addr":"0.0.0.0:{{ .Values.electrs.ports.electrum }}","monitoring_addr":"0.0.0.0:{{ .Values.electrs.ports.exporter }}","network":"bitcoin"}` | electrs config file settings. Helm templates can be used. See schema at https://github.com/romanz/electrs/blob/master/internal/config_specification.toml |
+| electrs.image.pullPolicy | string | `"IfNotPresent"` | Configure electrs image pull policy |
+| electrs.image.repo | string | `"docker.io/getumbrel/electrs"` | Configure electrs image repo |
+| electrs.image.tag | string | `""` | Configure electrs image tag, defaults to .Chart.AppVersion |
+| electrs.ports.electrum | int | `50001` | Configure electrum address and port |
+| electrs.ports.exporter | int | `4224` | Configure exporter address and port |
+| electrs.resources | object | `{}` | Configure pod resources. |
+| electrs.securityContext | object | `{}` | Configure the Security Context. |
+| global.annotations | object | `{}` | Set additional global annotations. Helm templates can be used. |
 | global.fullnameOverride | string | `""` | Set the entire name definition. |
 | global.imagePullSecrets | list | `[]` | Set image pull secrets. More info: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ |
 | global.labels | object | `{}` | Set additional global labels. Helm templates can be used. |
@@ -41,7 +32,7 @@ A Helm chart for Kubernetes
 | persistence.enabled | bool | `false` | Toggle the creation of a persistent volume. |
 | persistence.existingClaim | string | `nil` | Optionally mount an existing persistent volume claim. |
 | persistence.labels | object | `{}` | Configure the persistence labels. Helm templates can be used. |
-| persistence.size | string | `"500Gi"` | Size of the persistent volume. |
+| persistence.size | string | `"100Gi"` | Size of the persistent volume. |
 | persistence.storageClass | string | `""` | Persistent Volume Storage Class. If defined, storageClassName: <storageClass>. If set to "-", storageClassName: "", which disables dynamic provisioning. If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner.  (gp2 on AWS, standard on GKE, AWS & OpenStack). |
 | pod.affinity | object | `{}` | Affinity is a group of affinity scheduling rules. More info: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#affinity-v1-core |
 | pod.annotations | object | `{}` | Set pod annotations. Helm templates can be used. |
@@ -55,8 +46,6 @@ A Helm chart for Kubernetes
 | podMonitor.labels | object | `{}` | Set pod labels. Helm templates can be used. |
 | podMonitor.timeout | string | `"10s"` | scrape timeout. |
 | service.annotations | object | `{}` | Configure the service annotations. Helm templates can be used. |
-| service.enableP2p | bool | `false` | Toggle the exposure of the bitcoin p2p port. |
-| service.enableRpc | bool | `true` | Toggle the exposure of the bitcoin rpc port. |
 | service.labels | object | `{}` | Configure the service labels. Helm templates can be used. |
 | service.type | string | `"ClusterIP"` | Configure service type. |
 

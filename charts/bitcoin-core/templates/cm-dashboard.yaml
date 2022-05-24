@@ -3,12 +3,22 @@
 apiVersion: "v1"
 kind: "ConfigMap"
 metadata:
-  name: {{ print (include "bitcoin-core.name" .) "-dashboard" | quote }}
+  name: {{ print (include "bitcoin-core.fullname" .) "-dashboard" | quote }}
   labels:
-    {{- include "bitcoin-core.labels" . | nindent 4 }}
+    {{- range $k, $v := (merge .Values.global.labels .Values.configMap.labels (include "bitcoin-core.labels" . | fromYaml)) }}
+    {{- $v = tpl $v $ }}
+    {{ $k }}: {{ $v | quote }}
+    {{- end }}
     {{ .Values.exporter.grafana.sidecarLabel }}: "1"
+  {{- with (merge .Values.global.annotations .Values.configMap.annotations) }}
+  annotations:
+    {{- range $k, $v := . }}
+    {{- $v = tpl $v $ }}
+    {{ $k }}: {{ $v | quote }}
+    {{- end }}
+  {{- end }}
 data:
-  bitcoin-core-dashboard.json: |-
+  bitcoin-core-dashboard.json: |
     {
       "annotations": {
         "list": [

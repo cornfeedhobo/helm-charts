@@ -2,8 +2,8 @@
 apiVersion: "v1"
 kind: "ConfigMap"
 metadata:
-  name: {{ print (include "bitcoin-core.fullname" .) "-entrypoint" | quote }}
-  {{- with (merge .Values.global.labels .Values.configMap.labels (include "bitcoin-core.labels" . | fromYaml)) }}
+  name: {{ print (include "electrs.fullname" .) "-electrs" | quote }}
+  {{- with (merge .Values.global.labels .Values.configMap.labels (include "electrs.labels" . | fromYaml)) }}
   labels:
     {{- range $k, $v := . }}
     {{- $v = tpl $v $ }}
@@ -18,7 +18,7 @@ metadata:
     {{- end }}
   {{- end }}
 data:
-  entrypoint: |
-    #!/bin/ash
-    set -ex
-    exec su-exec bitcoin bitcoind -datadir="$BITCOIN_DATA"
+  config.toml: |
+    {{- range $k, $v := .Values.electrs.config }}
+    {{ $k }} = {{ tpl $v $ | quote }}
+    {{- end }}

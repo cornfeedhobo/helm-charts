@@ -6,7 +6,6 @@ global:
   # -- Set additional global labels. Helm templates can be used.
   labels: {}
   # -- Set additional global annotations. Helm templates can be used.
-  # More info: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#objectmeta-v1-meta
   annotations: {}
   # -- Set image pull secrets.
   # More info: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -80,7 +79,7 @@ persistence:
   # -- The desired access modes the volume should have.
   accessMode: "ReadWriteOnce"
   # -- Size of the persistent volume.
-  size: "500Gi"
+  size: "100Gi"
   # -- Optionally mount an existing persistent volume claim.
   existingClaim: null
 
@@ -91,22 +90,18 @@ service:
   annotations: {}
   # -- Configure service type.
   type: "ClusterIP"
-  # -- Toggle the exposure of the bitcoin p2p port.
-  enableP2p: false
-  # -- Toggle the exposure of the bitcoin rpc port.
-  enableRpc: true
 
 
 #####
 ## Containers
 
-bitcoind:
+electrs:
   image:
-    # -- Configure image repo.
-    repository: "ruimarinho/bitcoin-core"
-    # -- Configure image tag, defaults to .Chart.AppVersion.
+    # -- Configure electrs image repo
+    repo: "docker.io/getumbrel/electrs"
+    # -- Configure electrs image tag, defaults to .Chart.AppVersion
     tag: ""
-    # -- Configure image pull policy.
+    # -- Configure electrs image pull policy
     pullPolicy: "IfNotPresent"
   # -- Configure the Security Context.
   securityContext: {}
@@ -119,43 +114,18 @@ bitcoind:
     #   cpu: 100m
     #   memory: 128Mi
   ports:
-    # -- Configure the RPC port.
-    rpc: 8332
-    # -- Configure the P2P port.
-    p2p: 8333
-  # -- bitcoind config file settings. Helm templates can be used.
+    # -- Configure electrum address and port
+    electrum: 50001
+    # -- Configure exporter address and port
+    exporter: 4224
+  # -- Set the name of the PVC used by the bitcoin daemon. If set, it will be mounted into the electrs container.
+  bitcoinPVC: ""
+  # -- electrs config file settings. Helm templates can be used.
+  # See schema at https://github.com/romanz/electrs/blob/master/internal/config_specification.toml
   config:
-    bind: "0.0.0.0"
-    rpcbind: "0.0.0.0"
-    rpcallowip: "0.0.0.0/0"
-    rpcport: "{{ .Values.bitcoind.ports.rpc }}"
-
-exporter:
-  # -- Toggle the prometheus exporter sidecar.
-  enabled: false
-  image:
-    # -- Configure image repo.
-    repository: "jvstein/bitcoin-prometheus-exporter"
-    # -- Configure image tag.
-    tag: "v0.7.0"
-    # -- Configure image pull policy.
-    pullPolicy: "IfNotPresent"
-  # -- Configure the Security Context.
-  securityContext: {}
-  # -- Configure pod resources.
-  resources: {}
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
-  # -- Configure grafana dashboards when using the supporting sidecar.
-  # More info: https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md#sidecar-for-dashboards
-  grafana:
-    # -- toggle the creation of the grafana dashboard.
-    createDashboardConfigMap: false
-    # -- grafana's prometheus datasource name.
-    datasourceName: "Prometheus"
-    # -- label for the sidecar to pick up the dashboard config.
-    sidecarLabel: "grafana_dashboard"
+    network: "bitcoin"
+    daemon_rpc_addr: "bitcoin-core:8332"
+    daemon_p2p_addr: "bitcoin-core:8333"
+    db_dir: "/data"
+    electrum_rpc_addr: "0.0.0.0:{{ .Values.electrs.ports.electrum }}"
+    monitoring_addr: "0.0.0.0:{{ .Values.electrs.ports.exporter }}"

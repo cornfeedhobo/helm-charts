@@ -1,0 +1,25 @@
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: {{ print (include "electrs.fullname" .) "-electrum" | quote }}
+  {{- with (merge .Values.global.labels .Values.service.labels (include "electrs.labels" . | fromYaml)) }}
+  labels:
+    {{- range $k, $v := . }}
+    {{- $v = tpl $v $ }}
+    {{ $k }}: {{ $v | quote }}
+    {{- end }}
+  {{- end }}
+  {{- with (merge .Values.global.annotations .Values.service.annotations) }}
+  annotations:
+    {{- range $k, $v := . }}
+    {{- $v = tpl $v $ }}
+    {{ $k }}: {{ $v | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type | quote }}
+  ports:
+    - name: "electrum"
+      port: {{ .Values.electrs.ports.electrum }}
+      targetPort: "electrum"
