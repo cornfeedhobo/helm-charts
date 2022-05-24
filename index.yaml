@@ -3,6 +3,17 @@ entries:
   bitcoin-core:
   - apiVersion: v2
     appVersion: 22.0-alpine
+    created: "2022-05-24T21:19:03.386732372Z"
+    description: A Helm chart for Kubernetes
+    digest: 9884101f6d5a043b3fd8d6aaf63ff3c3fc8ca32eeaffb70e1b53a00bd59e8042
+    icon: https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg
+    name: bitcoin-core
+    type: application
+    urls:
+    - https://github.com/cornfeedhobo/helm-charts/releases/download/bitcoin-core-0.4.0/bitcoin-core-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
+    appVersion: 22.0-alpine
     created: "2022-05-13T17:39:33.737780893Z"
     description: A Helm chart for Kubernetes
     digest: 9585ad18ddb14fab6acf6c8f9c04b025fbc5b3c99849a38481b33797fa96eca7
@@ -133,4 +144,16 @@ entries:
     urls:
     - https://github.com/cornfeedhobo/helm-charts/releases/download/bitcoin-core-0.1.0/bitcoin-core-0.1.0.tgz
     version: 0.1.0
-generated: "2022-05-13T17:39:33.737939996Z"
+  electrs:
+  - apiVersion: v2
+    appVersion: v0.9.4
+    created: "2022-05-24T21:19:03.52322604Z"
+    description: A Helm chart for Kubernetes
+    digest: 1b3c6d73b34fd882e1ec3542265ad1c6d479e4b76001af2bc0f5cc05589dbfdd
+    icon: https://raw.githubusercontent.com/romanz/electrs/master/logo/icon.svg
+    name: electrs
+    type: application
+    urls:
+    - https://github.com/cornfeedhobo/helm-charts/releases/download/electrs-0.2.0/electrs-0.2.0.tgz
+    version: 0.2.0
+generated: "2022-05-24T21:19:03.523445745Z"
