@@ -55,6 +55,7 @@ spec:
       {{- with .Values.pod.securityContext }}
       securityContext: {{- toYaml . | nindent 8 }}
       {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.pod.terminationGracePeriodSeconds }}
       containers:
         - name: "bitcoin-core"
           {{- with .Values.bitcoind.securityContext }}
@@ -171,7 +172,10 @@ spec:
         resources:
           requests:
             storage: {{ .Values.persistence.size | quote }}
-        {{- if .Values.persistence.storageClass }}
-        storageClassName: {{ .Values.persistence.storageClass }}
+        {{- with .Values.persistence.storageClass }}
+        storageClassName: {{ quote . }}
         {{- end }}
+  {{- with .Values.persistence.retentionPolicy }}
+  persistentVolumeClaimRetentionPolicy: {{- toYaml . | nindent 4 }}
+  {{- end }}
   {{- end }}

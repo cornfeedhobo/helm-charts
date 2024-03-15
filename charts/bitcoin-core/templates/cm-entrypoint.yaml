@@ -20,5 +20,6 @@ metadata:
 data:
   entrypoint: |
     #!/bin/ash
+    echo "uid:gid for bitcoin:bitcoin is $(id -u bitcoin):$(id -g bitcoin)"
     set -ex
-    exec su-exec bitcoin bitcoind -datadir="$BITCOIN_DATA"
+    exec su-exec bitcoin:bitcoin bitcoind -datadir="$BITCOIN_DATA"

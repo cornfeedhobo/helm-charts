@@ -45,6 +45,9 @@ pod:
   securityContext: {}
     # fsGroup: 2000
 
+  # -- Ensure bitcoind has enough time to gracefully stop
+  terminationGracePeriodSeconds: 300
+
 podMonitor:
   # -- Create the PodMonitor resource.
   enabled: false
@@ -83,6 +86,8 @@ persistence:
   size: "500Gi"
   # -- Optionally mount an existing persistent volume claim.
   existingClaim: null
+  # -- https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention
+  retentionPolicy: {}
 
 service:
   # -- Configure the service labels. Helm templates can be used.
@@ -91,8 +96,10 @@ service:
   annotations: {}
   # -- Configure service type.
   type: "ClusterIP"
+  # -- Configure service affinity.
+  sessionAffinity: "ClientIP"
   # -- Toggle the exposure of the bitcoin p2p port.
-  enableP2p: false
+  enableP2p: true
   # -- Toggle the exposure of the bitcoin rpc port.
   enableRpc: true
 
@@ -140,8 +147,10 @@ exporter:
     tag: "v0.7.0"
     # -- Configure image pull policy.
     pullPolicy: "IfNotPresent"
-  # -- Configure the Security Context.
-  securityContext: {}
+  # -- Configure the Security Context. Defaults to matching the bitcoin container's default.
+  securityContext:
+    runAsUser: 100
+    runAsGroup: 101
   # -- Configure pod resources.
   resources: {}
     # limits:

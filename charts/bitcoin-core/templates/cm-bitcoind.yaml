@@ -22,5 +22,11 @@ data:
     printtoconsole=1
     server=1
     {{- range $k, $v := .Values.bitcoind.config }}
+    {{- if (kindIs "slice" $v) }}
+    {{- range $sv := $v }}
+    {{ $k }}={{ tpl $sv $ }}
+    {{- end }}
+    {{- else }}
     {{ $k }}={{ tpl $v $ }}
+    {{- end }}
     {{- end }}
