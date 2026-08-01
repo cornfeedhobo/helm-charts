@@ -161,6 +161,20 @@ entries:
   electrs:
   - apiVersion: v2
     appVersion: v0.9.4
+    created: "2026-08-01T16:42:04.258776278Z"
+    description: A Helm chart for Kubernetes
+    digest: 2504725d104ba39f34ea75b9e5087e98e401d22e76b4b7907cad0de13d115b51
+    icon: https://raw.githubusercontent.com/romanz/electrs/master/logo/icon.svg
+    maintainers:
+    - name: cornfeedhobo
+      url: https://github.com/cornfeedhobo
+    name: electrs
+    type: application
+    urls:
+    - https://github.com/cornfeedhobo/helm-charts/releases/download/electrs-0.2.1/electrs-0.2.1.tgz
+    version: 0.2.1
+  - apiVersion: v2
+    appVersion: v0.9.4
     created: "2022-05-24T21:19:03.52322604Z"
     description: A Helm chart for Kubernetes
     digest: 1b3c6d73b34fd882e1ec3542265ad1c6d479e4b76001af2bc0f5cc05589dbfdd
@@ -170,4 +184,16 @@ entries:
     urls:
     - https://github.com/cornfeedhobo/helm-charts/releases/download/electrs-0.2.0/electrs-0.2.0.tgz
     version: 0.2.0
-generated: "2024-03-16T03:15:12.894696154Z"
+  vpa-creator:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2026-08-01T16:42:04.384902623Z"
+    description: A controller that creates Vertical Pod Autoscalers for Deployments
+      and Jobs.
+    digest: 0cf6cc1806996415135522c12919e94a4754f99d3911d97e8923284f3142b095
+    name: vpa-creator
+    type: application
+    urls:
+    - https://github.com/cornfeedhobo/helm-charts/releases/download/vpa-creator-0.1.0/vpa-creator-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-08-01T16:42:04.384944655Z"
